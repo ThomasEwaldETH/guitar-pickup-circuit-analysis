@@ -40,7 +40,7 @@ other.
 Requires Python ≥ 3.10 (developed on 3.13).
 
 ```bash
-git clone https://github.com/<user>/guitar-pickup-circuit-analysis.git
+git clone https://github.com/ThomasEwaldETH/guitar-pickup-circuit-analysis.git
 cd guitar-pickup-circuit-analysis
 python -m venv .venv
 # Windows:  .venv\Scripts\activate      Linux/macOS:  source .venv/bin/activate
