@@ -362,6 +362,62 @@ get enough N·A_eff with little L (large area, few turns).
 26. **Example plots are not in the repository**, because `output/` is ignored. A
     `docs/` folder with a few committed images would let them show up in this README.
 
+## Literature on pickup modelling
+
+Checked 2026-11-02 (bibliographic records or full text; the full write-up with
+summaries is in the project notes). Papers marked * were not read in full.
+
+**String-to-voltage (source) models.** None of these models R, L or C, so they do not
+validate Stage 1, but they would supply a source stage in front of the network:
+
+- G. Lemarquand, V. Lemarquand, "Calculation Method of Permanent-Magnet Pickups for
+  Electric Guitars", *IEEE Trans. Magn.* 43(9), 3573–3578 (2007),
+  DOI 10.1109/TMAG.2007.891671.* Coulombian magnet model, EMF from the flux cut by the
+  string, harmonics of the EMF.
+- N. G. Horton, T. R. Moore, "Modeling the magnetic pickup of an electric guitar",
+  *Am. J. Phys.* 77(2), 144–150 (2009), DOI 10.1119/1.2990663. Numerical magnet field,
+  string as linearly magnetised disks, EMF proportional to dB_z/dt. Field validated with
+  a Hall probe, no coil output measured.
+- L. Guadagnin, B. Lihoreau, P. Lotton, E. Brasseur, "Analytical Modeling and
+  Experimental Characterization of a Magnetic Pickup for Electric Guitar", *J. Audio Eng.
+  Soc.* 65(9), 711–721 (2017).* Uniform-field model; the pickup is a Thevenin source in
+  front of the measured impedance.
+- R. C. D. Paiva, J. Pakarinen, V. Valimaki, "Acoustics and Modeling of Pickups",
+  *J. Audio Eng. Soc.* 60(10), 768–782 (2012).* Pickup position and aperture filtering;
+  see also the thesis (Aalto, 2013) for pickup-cable interaction.
+
+**Winding capacitance and impedance (relevant to Stage 1):**
+
+- P. R. Kotiuga, "Inter-winding Distributed Capacitance and Guitar Pickup Transient
+  Response", *IEEE Trans. Magn.* (CEFC 2014), DOI 10.1109/TMAG.2014.2364041,
+  arXiv 1508.01246. Turn-level capacitance matrix C = C0 (d I - A + B); winding pattern
+  enters through the adjacency matrix A. Theory only, no numbers.
+- C. Batchelor et al., "Guitar Pickups I: Analysis of the Effect of Winding and Wire Gauge
+  on Single Coil Electric Guitar Pickups", arXiv 2409.19782 (2024, preprint). Measured
+  resonance of Strat-style coils, N = 5000-12000, AWG 42 and 44:
+  f0 = 33.3 kHz exp(-1.14e-4 N) (AWG 42), f0 = 25.4 kHz exp(-1.06e-4 N) (AWG 44).
+- [BK08] and [MK97] below for the capacitance formulas themselves.
+
+**First check against these data (unloaded `example_strat`, heavy formvar, kappa 0.85):**
+
+| N | AWG 42 model / measured fit | AWG 44 model / measured fit |
+|---|---|---|
+| 5000 | 16.5 / 18.8 kHz | 14.9 / 15.0 kHz |
+| 8000 | 12.6 / 13.4 kHz | 11.4 / 10.9 kHz |
+| 10000 | 11.0 / 10.6 kHz | 10.1 / 8.8 kHz |
+| 12000 | 9.8 / 8.5 kHz | 9.0 / 7.1 kHz |
+
+The level is right (about 10 % near 8000 turns) but the model's f0 falls too slowly with
+N, because the computed C_winding drops from 117 pF to 54 pF over this range. Bobbin
+geometry differs from the measured coils, so this is a trend check, not a fit.
+
+**Next steps suggested by the literature:** repair `koch_orthocyclic_factor` from [BK08]
+eqs. (11)-(12) and cross-check C0 against [MK97]; calibrate kappa on one measured pickup
+(none of the papers above give core permeabilities or a kappa); consider M. Zollner,
+*Physik der Elektrogitarre* (2014) as a source for mu_r and loss values (contents not
+checked).
+
+
 ---
 
 ## References
@@ -372,5 +428,7 @@ get enough N·A_eff with little L (large area, few turns).
   *IEEE Trans. Ind. Appl.* 44(1), 223–233 (2008).
 - **[W28]** H. A. Wheeler, "Simple inductance formulas for radio coils", *Proc. IRE*
   16, 1398 (1928).
+- **[MK97]** A. Massarini, M. K. Kazimierczuk, "Self-capacitance of inductors", *IEEE Trans.
+  Power Electron.* 12(4), 671–676 (1997), DOI 10.1109/63.602562.
 - P. Ripka et al., demagnetisation factors of cylinders, *J. Magn. Magn. Mater.* (2021).
 - lcapy, symbolic linear circuit analysis in Python: https://github.com/mph-/lcapy
